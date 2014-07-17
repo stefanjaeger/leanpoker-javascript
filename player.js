@@ -1,6 +1,6 @@
 module.exports = {
 
-    VERSION: "Desperados",
+    VERSION: "Eichhof",
 
     bet_request: function (game_state) {
         var ourBet = game_state.players[game_state.in_action].bet;
@@ -87,7 +87,7 @@ module.exports = {
             switch (rank()) {
 
             case 1:
-                return minimumRaise() * 2;
+                return minimumRaise() * 5;
             case 2:
                 return minimumRaise() * 2;
             case 3:
