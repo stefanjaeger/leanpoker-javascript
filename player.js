@@ -1,11 +1,11 @@
 module.exports = {
 
-    VERSION: "Budweiser",
+    VERSION: "Calanda",
 
     bet_request: function (game_state) {
         var ourBet = game_state.players[game_state.in_action].bet;
 
-        var callOrFlop = function () {
+        var callOrFold = function () {
             var currentCall = call();
 
             if(currentCall <= 50){
@@ -16,12 +16,12 @@ module.exports = {
                 return call();
             }
 
-            return flop();
+            return fold();
         };
         var call = function () {
             return game_state.current_buy_in - ourBet - game_state.small_blind;
         }
-        var flop = function () {
+        var fold = function () {
             return 0;
         }
         var minimumRaise = function () {
@@ -82,11 +82,26 @@ module.exports = {
         }
 
         var preFlopStrategie = function () {
-            if (rank() < 6) {
+
+            switch (rank()) {
+
+            case 1:
+                return minimumRaise() * 2;
+            case 2:
+                return minimumRaise() * 2;
+            case 3:
+                return minimumRaise() * 1.5;
+            case 4:
+                return minimumRaise() * 1.5;
+            case 5:
                 return minimumRaise();
-            } else {
-                return callOrFlop();
+            case 6:
+                return callOrFold();
+            default:
+                return callOrFold();
             }
+
+
         };
 
         var flopStrategie = function () {
