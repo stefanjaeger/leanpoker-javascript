@@ -4,7 +4,10 @@ module.exports = {
 
     bet_request: function (game_state) {
         var ourBet = game_state.players[game_state.in_action].bet;
-
+        var cards = game_state.players[game_state.in_action].hole_cards;
+        var card0 = cards[0];
+        var card1 = cards[1];
+        
         var callOrFold = function () {
             var currentCall = call();
 
@@ -29,20 +32,17 @@ module.exports = {
             return call() + game_state.minimum_raise;
         }
         var rank = function () {
-            var cards = game_state.players[game_state.in_action].hole_cards;
+            
 
-            var card0 = cards[0].rank;
-            var card1 = cards[1].rank;
-
-            if (card0 === '10') {
-                card0 = 'T';
+            if (card0.rank === '10') {
+                card0.rank = 'T';
             }
-            if (card1 === '10') {
-                card1 = 'T';
+            if (card1.rank === '10') {
+                card1.rank = 'T';
             }
 
-            var hand = card0 + card1,
-                handReverse = card1 + card0;
+            var hand = card0.rank + card1.rank,
+                handReverse = card1.rank + card0.rank;
 
             var ranks = [
                 {
@@ -70,7 +70,7 @@ module.exports = {
                     "cards": ['QJ', 'JT', 'T9', '98', '87', '76', '75', '65']
                 }
             ];
-
+            
             var rank = 7;
             ranks.every(function (data, index) {
                 if (data.cards.indexOf(hand) > 0 || data.cards.indexOf(handReverse) > 0) {
@@ -81,11 +81,46 @@ module.exports = {
             });
             return rank;
         }
+        
+        var isStraight = function(){
+                var allCards = [].concat(game_state.community_cards);
+                allCards.push(card0);
+                allCards.push(card1);
+            
+                allCards = allCards.map(function(card){
+                    switch (card.rank){
+                            case 'A': return 14;
+                            case 'K': return 13;
+                            case 'Q': return 12;
+                            case 'J': return 11;
+                            default: return card.rank;
+                    }
+                });    
+            
+                function sortNumber(a,b) {
+                    return a - b;
+                }
+
+                allCards.sort(sortNumber);
+            
+                var prevNumber;
+                var gapCount = 0;
+                allCards.forEach(function(currentNumber){
+                    if(prevNumber !== undefined && currentNumber - prevNumber === 1){
+                        gapCount++;
+                    } else {
+                        gapCount = 0;
+                    }
+                    
+                    prevNumber = currentNumber;
+                });
+                
+                return gapCount > 3;
+            };
 
         var preFlopStrategie = function () {
 
             switch (rank()) {
-
             case 1:
                 return minimumRaise() * 5;
             case 2:
@@ -106,7 +141,26 @@ module.exports = {
         };
 
         var flopStrategie = function () {
-
+            if(isStraight()){
+                return minimumRaise() * 10;
+            }
+            
+            switch (rank()) {
+            case 1:
+                return minimumRaise() * 5;
+            case 2:
+                return minimumRaise() * 2;
+            case 3:
+                return minimumRaise() * 1.5;
+            case 4:
+                return minimumRaise() * 1.5;
+            case 5:
+                return minimumRaise();
+            case 6:
+                return callOrFold();
+            default:
+                return callOrFold();
+            }
         };
 
         // Rounds
@@ -116,15 +170,15 @@ module.exports = {
             return preFlopStrategie();
         case 3: // Flop
             console.log("flop");
-            return preFlopStrategie();
+            return flopStrategie();
         case 4: // Turn
             console.log("turn");
-            return preFlopStrategie();
+            return flopStrategie();
         case 5: // River
             console.log("river");
-            return preFlopStrategie();
+            return flopStrategie();
         default:
-            return preFlopStrategie();
+            return flopStrategie();
         }
     },
 
