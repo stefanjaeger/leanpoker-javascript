@@ -3,21 +3,15 @@ module.exports = {
     VERSION: "1.0",
 
     bet_request: function (game_state) {
-        var findHighestBet = function (game_state) {
-            var max = 0;
+        var getCurrentPlayer = function(game_state) {
             for (var i = 0; i < game_state.players.length; i++) {
-                if (game_state.players[i].status === 'active') {
-                    if (game_state.players[i].bet > max) {
-                        max = game_state.players[i].bet;
-                    }
+                if (game_state.players[i].name === 'Grischa') {
+                    return game_state.players[i];
                 }
             }
-            return max;
         }
 
-        console.log('max = ' + findHighestBet(game_state));
-
-        return 0;
+        return game_state.current_buy_in - getCurrentPlayer(game_state).bet;
     },
 
     showdown: function (game_state) {
