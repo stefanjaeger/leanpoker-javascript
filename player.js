@@ -8,6 +8,7 @@ module.exports = {
         var callOrFold = function () {
             var currentCall = call();
 
+            // TBD: nicht fix 50, sondern basierend auf Blindes
             if(currentCall <= 50){
                 return call();
             }
