@@ -6,7 +6,10 @@ module.exports = {
         var call = function () {
             return game_state.current_buy_in - game_state.players[game_state.in_action].bet;
         }
-        return call();
+        var minimumRaise = function() {
+            return game_state.current_buy_in - game_state.players[game_state.in_action].bet + game_state.minimum_raise;
+        }
+        return minimumRaise();
     },
 
     showdown: function (game_state) {
