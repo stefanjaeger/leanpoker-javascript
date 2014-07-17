@@ -4,10 +4,10 @@ module.exports = {
 
     bet_request: function (game_state) {
         var call = function () {
-            return game_state.current_buy_in - game_state.players[game_state.in_action].bet;
+            return game_state.current_buy_in - game_state.players[game_state.in_action].bet - game_state.small_blind;
         }
         var minimumRaise = function () {
-            return game_state.current_buy_in - game_state.players[game_state.in_action].bet + game_state.minimum_raise;
+            return call() + game_state.minimum_raise;
         }
         var rank = function () {
             var cards = game_state.players[game_state.in_action].hole_cards;
