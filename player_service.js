@@ -14,7 +14,7 @@ app.post('/', function(req, res){
     res.send(200, player.bet_request(JSON.parse(req.body.game_state)).toString());
   } else if(req.body.action == 'showdown') {
     player.showdown(JSON.parse(req.body.game_state));
-    res.send(200, 'OK');
+    res.send(200, 'OK2');
   } else if(req.body.action == 'version') {
     res.send(200, player.VERSION);
   } else {
@@ -23,6 +23,6 @@ app.post('/', function(req, res){
 
 });
 
-port = 1337;
+port = 2000;
 app.listen(port);
 console.log('Listening at http://localhost:' + port)
