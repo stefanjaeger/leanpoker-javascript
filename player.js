@@ -1,10 +1,28 @@
 module.exports = {
 
-    VERSION: "Amber",
+    VERSION: "Budweiser",
 
     bet_request: function (game_state) {
+        var ourBet = game_state.players[game_state.in_action].bet;
+
+        var callOrFlop = function () {
+            var currentCall = call();
+
+            if(currentCall <= 50){
+                return call();
+            }
+
+            if(currentCall <= ourBet * 1.25){
+                return call();
+            }
+
+            return flop();
+        };
         var call = function () {
-            return game_state.current_buy_in - game_state.players[game_state.in_action].bet - game_state.small_blind;
+            return game_state.current_buy_in - ourBet - game_state.small_blind;
+        }
+        var flop = function () {
+            return 0;
         }
         var minimumRaise = function () {
             return call() + game_state.minimum_raise;
@@ -63,10 +81,34 @@ module.exports = {
             return rank;
         }
 
-        if (rank() < 6) {
-            return minimumRaise();
-        } else {
-            return call();
+        var preFlopStrategie = function () {
+            if (rank() < 6) {
+                return minimumRaise();
+            } else {
+                return callOrFlop();
+            }
+        };
+
+        var flopStrategie = function () {
+
+        };
+
+        // Rounds
+        switch (game_state.community_cards.length) {
+        case 0: // Preflop
+            console.log("preflop");
+            return preFlopStrategie();
+        case 3: // Flop
+            console.log("flop");
+            return preFlopStrategie();
+        case 4: // Turn
+            console.log("turn");
+            return preFlopStrategie();
+        case 5: // River
+            console.log("river");
+            return preFlopStrategie();
+        default:
+            return preFlopStrategie();
         }
     },
 
